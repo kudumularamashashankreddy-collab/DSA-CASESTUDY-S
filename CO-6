@@ -1,0 +1,83 @@
+import java.util.*;
+
+public class LCSDocumentComparison {
+
+    public static void main(String[] args) {
+
+        String A = "PROGRAM";
+        String B = "PROBLEM";
+
+        int m = A.length();
+        int n = B.length();
+
+        
+        int[][] dp = new int[m + 1][n + 1];
+
+        
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+
+                if (A.charAt(i - 1) == B.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                } else {
+                    dp[i][j] = Math.max(
+                            dp[i - 1][j],
+                            dp[i][j - 1]
+                    );
+                }
+            }
+        }
+
+        
+        System.out.println("LCS Dynamic Programming Table:\n");
+
+        System.out.print("    ");
+        System.out.print("∅ ");
+        for (int j = 0; j < n; j++) {
+            System.out.print(B.charAt(j) + " ");
+        }
+        System.out.println();
+
+        for (int i = 0; i <= m; i++) {
+
+            if (i == 0)
+                System.out.print("∅ ");
+            else
+                System.out.print(A.charAt(i - 1) + " ");
+
+            for (int j = 0; j <= n; j++) {
+                System.out.print(dp[i][j] + " ");
+            }
+            System.out.println();
+        }
+
+        System.out.println("\nLCS Length = " + dp[m][n]);
+
+        
+        StringBuilder lcs = new StringBuilder();
+
+        int i = m;
+        int j = n;
+
+        while (i > 0 && j > 0) {
+
+            if (A.charAt(i - 1) == B.charAt(j - 1)) {
+
+                lcs.append(A.charAt(i - 1));
+
+                i--;
+                j--;
+            }
+            else if (dp[i - 1][j] > dp[i][j - 1]) {
+                i--;
+            }
+            else {
+                j--;
+            }
+        }
+
+        lcs.reverse();
+
+        System.out.println("LCS = " + lcs.toString());
+    }
+}
