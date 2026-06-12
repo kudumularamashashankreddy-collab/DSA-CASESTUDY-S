@@ -1,0 +1,101 @@
+import java.util.*;
+
+public class LogisticsKnapsack {
+
+    static List<Integer> knapsack01(int[] weights, int[] values, int W) {
+
+        int n = weights.length;
+
+        int[][] dp = new int[n + 1][W + 1];
+
+        
+        for (int i = 1; i <= n; i++) {
+            for (int w = 0; w <= W; w++) {
+
+                // Skip current item
+                dp[i][w] = dp[i - 1][w];
+
+                // Take current item if it fits
+                if (weights[i - 1] <= w) {
+                    dp[i][w] = Math.max(
+                            dp[i][w],
+                            dp[i - 1][w - weights[i - 1]]
+                                    + values[i - 1]
+                    );
+                }
+            }
+        }
+
+        System.out.println("Optimal Value = " + dp[n][W]);
+
+        
+        List<Integer> chosen = new ArrayList<>();
+
+        int w = W;
+
+        for (int i = n; i >= 1; i--) {
+
+            if (dp[i][w] != dp[i - 1][w]) {
+                chosen.add(i);
+                w -= weights[i - 1];
+            }
+        }
+
+        Collections.reverse(chosen);
+
+        return chosen;
+    }
+
+    public static void main(String[] args) {
+
+        String[] items = {"A","B","C","D","E","F","G","H"};
+
+        int[] weights = {
+                5,  // A
+                8,  // B
+                3,  // C
+                10, // D
+                4,  // E
+                6,  // F
+                7,  // G
+                2   // H
+        };
+
+        int[] values = {
+                40, // A
+                50, // B
+                20, // C
+                70, // D
+                30, // E
+                35, // F
+                45, // G
+                15  // H
+        };
+
+        int capacity = 24;
+
+        List<Integer> chosen = knapsack01(weights, values, capacity);
+
+        int totalWeight = 0;
+        int totalValue = 0;
+
+        System.out.println("\nSelected Consignments:");
+
+        for (int idx : chosen) {
+
+            int i = idx - 1;
+
+            System.out.println(
+                    items[i]
+                    + "  Weight=" + weights[i]
+                    + "  Value=" + values[i]
+            );
+
+            totalWeight += weights[i];
+            totalValue += values[i];
+        }
+
+        System.out.println("\nTotal Weight = " + totalWeight);
+        System.out.println("Total Value  = " + totalValue);
+    }
+}
